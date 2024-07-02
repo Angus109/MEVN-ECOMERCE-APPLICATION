@@ -1,4 +1,4 @@
-# TRIFT ME (TEAM PROJECT)
+# MEVN E-COMMERCE APPLICATION
 A Simple mevm E-commerce System Built with Nodejs, MongoDB, Vuejs and TailwindCSS
 
 
