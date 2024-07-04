@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const Post = require("./models/Post");
+const dotenv = require("dotenv")
+
+dotenv.config({ path: "config.env" });
 
 const app = express();
 
@@ -20,8 +23,7 @@ app.use(
 app.use(express.json());
 app.use(morgan("dev"));
 
-const DB =
-  "mongodb+srv://daniel0426:wjdgudwls12!@cluster0.4kcct.mongodb.net/ecommerce?retryWrites=true&w=majority";
+const DB = process.env.THRIFTME_DB_URL
 const PORT = 4000;
 
 mongoose.connect(
@@ -51,7 +53,7 @@ const authUser = (req, res, next) => {
       .status(401)
       .json({ message: "Access denied - User not logged in" });
   } else {
-    jwt.verify(token, "monkeyPuzzle", (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
       if (err) {
         console.log(err);
         return res.status(401).json(err.message);
@@ -112,7 +114,7 @@ app.post("/posts", authUser, async (req, res, next) => {
   }
 });
 
-//Update post - Daniel
+//Update pos
 
 app.patch("/posts/:postId", authUser, async (req, res, next) => {
   try {
@@ -229,7 +231,7 @@ app.post("/accounts/login", async (req, res) => {
                 id: existingAccount._id,
                 email: existingAccount.email,
               },
-              "monkeyPuzzle",
+              process.env.JWT_SECRET_KEY,
               {
                 expiresIn: lifespan,
               }
