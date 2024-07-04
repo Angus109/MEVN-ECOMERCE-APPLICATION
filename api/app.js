@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 const DB = process.env.THRIFTME_DB_URL
-const PORT = 4000;
+const PORT = process.env.PORT || 3000;
 
 mongoose.connect(
   DB,
