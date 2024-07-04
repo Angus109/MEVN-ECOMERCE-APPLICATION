@@ -11,9 +11,11 @@ const dotenv = require("dotenv")
 dotenv.config({ path: "config.env" });
 
 const app = express();
+const DASHBOARD_URL = process.env.DASHBOARD_URL
+const BACKEND_URL= process.env.BACKEND_UR
 
 const cors = require("cors");
-app.use(cors({ credentials: true, origin: "http://localhost:8080" }));
+app.use(cors({ credentials: true, origin: [DASHBOARD_UR, BACKEND_URL]));
 
 app.use(
   express.urlencoded({
