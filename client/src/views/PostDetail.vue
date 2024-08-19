@@ -168,7 +168,7 @@ export default {
   methods: {
     async getPost() {
       const response = await fetch(
-        "http://localhost:4000/posts/" + this.postId
+        "https://mevn-ecomerce-application.onrender.com/posts/" + this.postId
       );
       const data = await response.json();
       this.post = data;

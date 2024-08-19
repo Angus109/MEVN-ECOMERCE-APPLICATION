@@ -37,7 +37,7 @@ export default {
 
     if (this.user) {
       try {
-        let res = await fetch("http://localhost:4000/account", {
+        let res = await fetch("https://mevn-ecomerce-application.onrender.com/account", {
           credentials: "include",
         });
         let user = await res.json();
@@ -54,7 +54,7 @@ export default {
 
   methods: {
     async logout() {
-      const response = await fetch("http://localhost:4000/accounts/logout", {
+      const response = await fetch("https://mevn-ecomerce-application.onrender.com/accounts/logout", {
         credentials: "include",
       });
       const data = await response.json();

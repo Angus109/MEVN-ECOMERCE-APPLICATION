@@ -53,14 +53,14 @@ const authUser = (req, res, next) => {
     console.log("User not logged in");
     return res
       .status(401)
-      .json({ message: "Access denied - User not logged in" });
+      .send({success:false, message: "Access denied - User not logged in" })
   } else {
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
       if (err) {
         console.log(err);
-        return res.status(401).json(err.message);
+        return res.status(401).send({success:false, error: err}) ;
       } else {
-        req.userId = decodedToken.id;
+        req.userId = decodedToken.id;s
         next();
       }
     });
@@ -72,7 +72,7 @@ const authUser = (req, res, next) => {
 app.get("/posts", async (req, res, next) => {
   try {
     const posts = await Post.find().populate("author", "email fname lname");
-    res.status(200).json(posts);
+    res.status(200).send({success:true, result: posts});
   } catch (err) {
     next(err);
   }
@@ -81,11 +81,15 @@ app.get("/posts", async (req, res, next) => {
 //Get specific post - Alexis
 
 app.get("/posts/:postId", async (req, res, next) => {
+
+  if(!req.params.postId){
+    return res.status(404).send({success: false, message: "postID is required"})
+  }
   try {
     const post = await Post.findById(req.params.postId)
       .populate("author", "email fname lname createdAt")
       .populate("comments.author", "email fname lname createdAt");
-    res.status(200).json(post);
+    res.status(200).send({success:true, result: post})
   } catch (err) {
     next(err);
   }
@@ -94,6 +98,16 @@ app.get("/posts/:postId", async (req, res, next) => {
 //Create new post - Daniel
 
 app.post("/posts", authUser, async (req, res, next) => {
+  if (!req.body.imgURL){
+    return res.status(404).send({success: false, message: "image is a required filed"})
+  }
+  if(!req.body.title || !req.body.userId || !req.body.price || !req.body.category || !req.body.condition){
+    return res.status(404).send({success:false, message: "tile, userid, price, category, condition is required"})
+  }
+
+  if(!req.body.size || !req.body.location || req.body.paymentType || !req.body.shippingOption || !req.body.description ){
+    return res.status(404).send({success:false, message: "size, location, paymentType, shippingOption, description is required "})
+  }
   try {
     const post = new Post({
       title: req.body.title,
@@ -110,7 +124,7 @@ app.post("/posts", authUser, async (req, res, next) => {
       comments: [],
     });
     const savedPost = await post.save();
-    res.json(savedPost);
+    res.status(200).send({success:true, result:savedPost});
   } catch (err) {
     next(err);
   }
@@ -137,7 +151,7 @@ app.patch("/posts/:postId", authUser, async (req, res, next) => {
       req.params.postId,
       updatePost
     );
-    res.status(200).json(updatedPost);
+    res.status(200).send({success:true, result:updatedPost });
   } catch (err) {
     next(err);
   }
@@ -145,17 +159,28 @@ app.patch("/posts/:postId", authUser, async (req, res, next) => {
 
 //Delete post base code - Daniel, backend protection - Alexis
 app.delete("/posts/:postId", authUser, async (req, res, next) => {
+  if(!req.params.postId){
+     return res.status(401).send({success: false, message:"req params postId is required"})
+  }
+  if(!req.userId){
+    return res.status(401).send({
+      success: false,
+      message: "req userId is required"
+    })
+  }
   try {
     let post = await Post.findOneAndDelete({
       _id: req.params.postId,
       author: req.userId,
     });
     if (post) {
-      res.status(200).json(post);
+      res.status(200).send({success:true, result:post});
     } else {
       res
         .status(401)
-        .json({ message: "You are not authorised to delete this post." });
+        .send({ 
+          success: false,
+          message: "You are not authorised to delete this post." })
     }
   } catch (err) {
     next(err);
@@ -164,29 +189,44 @@ app.delete("/posts/:postId", authUser, async (req, res, next) => {
 
 //Account endpoints
 app.get("/account", authUser, async (req, res, next) => {
+  if(!req.userId){
+    return res.status(401).send({
+      success: false,
+     message: "req userId is required"
+    })
+  }
   try {
     const user = await Account.findById(req.userId);
 
-    return res.status(200).json({
-      id: user._id,
-      email: user.email,
-      fname: user.fname,
-      lname: user.lname,
+    return res.status(200).send({
+      success:true,
+      result: {
+        id: user._id,
+        email: user.email,
+        fname: user.fname,
+        lname: user.lname,
+      }
     });
   } catch (err) {
     next(err);
   }
 });
 app.post("/accounts/create", async (req, res) => {
+  if(!req.body.email){
+    return res.status(401).send({
+      success: false,
+      message: " req body email is required"
+    })
+  }
   const existingAccount = await Account.findOne({
     email: req.body.email,
   });
   if (existingAccount) {
-    return res.status(409).json({ message: "Email Already Exists" });
+    return res.status(409).send({ success: false, message: "Email Already Exists" });
   } else {
     bcrypt.hash(req.body.password, 10, async (err, hash) => {
       if (err) {
-        return res.status(550).json({ error: err });
+        return res.status(550).send({success:false, error: err });
       } else {
         const account = new Account({
           fname: req.body.fname,
@@ -196,20 +236,27 @@ app.post("/accounts/create", async (req, res) => {
           password: hash,
         });
         const savedAccount = await account.save();
-        res.json(savedAccount);
+        res.status(200).send({success:true, result:savedAccount });
       }
     });
   }
 });
 app.post("/accounts/login", async (req, res) => {
+  if(!req.body.email){
+    return res.status(401).send({
+      success: false,
+      message:'req.body.email is required'
+    })
+  } 
   const existingAccount = await Account.findOne({
     email: req.body.email,
   }); // try to retrievve the user matching the supplies email
   if (!existingAccount) {
     //if the user doesn't exist
-    return res.status(401).json({
+    return res.status(401).send({
+      success:false,
       message: "Authorization Failed",
-    }); // send back error to client and due to return, exit function
+    })
   } else {
     // otherwise if the user does exist
     bcrypt.compare(
@@ -219,9 +266,10 @@ app.post("/accounts/login", async (req, res) => {
         // compare supplied password with the encrypted account
         if (err) {
           // if the comparison fails
-          return res.status(401).json({
+          return res.status(401).send({
+            success: false,
             message: "Authorization Failed",
-          }); // send back error message and due to return, exit function
+          })
         } else {
           // otherwise if the comparison succeeds
           if (result) {
@@ -242,16 +290,20 @@ app.post("/accounts/login", async (req, res) => {
               maxAge: lifespan * 1000,
               httpOnly: true,
             }); //Expressed in seconds
-            return res.status(200).json({
-              id: existingAccount._id,
-              email: existingAccount.email,
-              fname: existingAccount.fname,
-              lname: existingAccount.lname,
+            return res.status(200).send({
+              success: true,
+              result: {
+                id: existingAccount._id,
+                email: existingAccount.email,
+                fname: existingAccount.fname,
+                lname: existingAccount.lname,
+              }
             });
           } else {
-            return res.status(401).json({
+            return res.status(401).send({
+              success:false,
               message: "Authorization Failed",
-            }); // send back error to client and due to return, exit function
+            })
           }
         }
       }
@@ -261,7 +313,9 @@ app.post("/accounts/login", async (req, res) => {
 
 app.get("/accounts/logout", async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
-  res.json({ message: "logged out " });
+  res.status(200).send({
+    success:true,
+     message: "logged out " });
 });
 
 //  ######   #######  ##     ## ##     ## ######## ##    ## ########  ######
@@ -275,11 +329,20 @@ app.get("/accounts/logout", async (req, res) => {
 //Get All Comments - Alexis
 
 app.get("/posts/:postId/comments", async (req, res) => {
+  if(!req.params.postId){
+    return res.status(401).send({
+      success: false,
+      message: " req.params.postId is required"
+    })
+  }
   const post = await Post.findById(req.params.postId).populate(
     "author",
     "email fname lname"
   );
-  res.status(200).json(post.comments);
+  res.status(200).send({
+    success:true,
+    result: post.comments
+  });
 });
 
 //Get Specific Comment - Alexis
@@ -303,6 +366,18 @@ app.delete(
   "/posts/:postId/comments/:commentId",
   authUser,
   async (req, res, next) => {
+    if(!req.params.postId){
+      return res.status(401).send({
+        success: false,
+        message: "req.params.postId is required"
+      })
+    }
+    if(!req.userId){
+      return res.status(401).send({
+        success: false,
+        message: "req.userId is required"
+      })
+    }
     try {
       let post = await Post.findOne({
         _id: req.params.postId,
@@ -311,14 +386,20 @@ app.delete(
       if (!post) {
         res
           .status(401)
-          .json({ message: "You are not authorised to delete this comment." });
+          .send({
+            success:false,
+            message: "You are not authorised to delete this comment." 
+          });
         return;
       }
 
       post.comments.id(req.params.commentId).remove();
       post.save();
       console.log(post);
-      res.status(200).json(post);
+      res.status(200).send({
+        success: true,
+        result: post
+      });
     } catch (err) {
       next(err);
     }
@@ -328,6 +409,12 @@ app.delete(
 //Post Comment - Alexis
 
 app.post("/posts/:postId/comments", authUser, async (req, res, next) => {
+  if(!req.params.postId){
+    return res.status(401).send({
+      success: false,
+      message: "req.params.postId is required"
+    })
+  }
   try {
     const post = await Post.findById(req.params.postId);
     post.comments.push({
@@ -335,7 +422,10 @@ app.post("/posts/:postId/comments", authUser, async (req, res, next) => {
       author: req.userId,
     });
     const savedPost = await post.save();
-    res.status(200).send(savedPost);
+    res.status(200).send({
+      success: true,
+      result: savedPost
+    });
   } catch (err) {
     next(err);
   }

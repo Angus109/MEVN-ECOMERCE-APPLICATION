@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     async getPosts() {
-      const response = await fetch("http://localhost:4000/posts");
+      const response = await fetch("https://mevn-ecomerce-application.onrender.com/posts");
       const data = await response.json();
       this.posts = data;
       this.filteredPosts = this.posts;

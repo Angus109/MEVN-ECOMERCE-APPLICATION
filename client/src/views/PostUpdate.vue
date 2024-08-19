@@ -305,7 +305,7 @@ export default {
 
     async getPostInfo() {
       const response = await fetch(
-        "http://localhost:4000/posts/" + this.postId
+        "https://mevn-ecomerce-application.onrender.com/posts/" + this.postId
       );
       const data = await response.json();
       this.post = data;
@@ -332,7 +332,7 @@ export default {
 
     async updatePost() {
       console.log("hello");
-      await fetch(`http://localhost:4000/posts/${this.post._id}`, {
+      await fetch(`https://mevn-ecomerce-application.onrender.com/posts/${this.post._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

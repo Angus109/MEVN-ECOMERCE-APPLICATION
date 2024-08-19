@@ -1,10 +1,7 @@
 <template class="">
   <div class="w-full">
     <BackToListings />
-    <form
-      @submit.prevent="createPost"
-      class="mx-auto my-12 box-border p-4 flex flex-col"
-    >
+    <form @submit.prevent="createPost" class="mx-auto my-12 box-border p-4 flex flex-col">
       <h1 class="text-bright-purple text-3xl self-center mb-12">
         Create Listings
       </h1>
@@ -13,36 +10,23 @@
           <div class="image flex-1">
             <img :src="imgURL" alt="" />
           </div>
-          <input
-            ref="inputRef"
-            type="file"
-            accept="image/*"
-            class="hidden border-2 lg:m-4 p-4"
-            @change="handleFileChange"
-            required
-          />
+          <input ref="inputRef" type="file" accept="image/*" class="hidden border-2 lg:m-4 p-4"
+            @change="handleFileChange" required />
           <div v-if="loading" class="loadingSpinner"></div>
-          <button
-            v-else
-            @click="imageBtnClick"
-            class="
+          <button v-else @click="imageBtnClick" class="
               border-2 border-bright-purple
               rounded-lg
               cursor-pointer
               w-full
               p-2
-            "
-          >
+            ">
             Upload Image
           </button>
         </div>
         <div class="item-info flex-1 flex flex-col p-4">
           <div class="form-group my-2">
             <label for="">Listing Title</label>
-            <input
-              type="text"
-              v-model="title"
-              class="
+            <input type="text" v-model="title" class="
                 w-full
                 mt-2
                 block
@@ -53,17 +37,11 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            />
+              " required />
           </div>
           <div class="form-group my-2">
             <label for="">Listing Price</label>
-            <input
-              type="number"
-              step=".01"
-              v-model="price"
-              class="
+            <input type="number" step=".01" v-model="price" class="
                 w-full
                 mt-2
                 block
@@ -74,17 +52,11 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            />
+              " required />
           </div>
           <div class="form-group">
             <label for="">Category</label>
-            <select
-              name=""
-              id=""
-              v-model="category"
-              class="
+            <select name="" id="" v-model="category" class="
                 my-2
                 w-full
                 block
@@ -95,9 +67,7 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            >
+              " required>
               <option selected disabled value="Category">Select Catgory</option>
               <option value="Mens">Mens</option>
               <option value="Womens">Womens</option>
@@ -107,11 +77,7 @@
           </div>
           <div class="form-group">
             <label for="">Condition</label>
-            <select
-              name=""
-              id=""
-              v-model="condition"
-              class="
+            <select name="" id="" v-model="condition" class="
                 my-2
                 w-full
                 block
@@ -122,9 +88,7 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            >
+              " required>
               <option selected disabled value="Select Condition">Select Condition</option>
               <option value="New">New</option>
               <option value="Like New">Like New</option>
@@ -135,10 +99,7 @@
           </div>
           <div class="form-group my-4">
             <label for="">Item Size</label>
-            <input
-              type="text"
-              v-model="size"
-              class="
+            <input type="text" v-model="size" class="
                 mt-2
                 w-full
                 block
@@ -149,17 +110,11 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            />
+              " required />
           </div>
           <div class="form-group">
             <label for="">location</label>
-            <select
-              name=""
-              id=""
-              v-model="location"
-              class="
+            <select name="" id="" v-model="location" class="
                 my-2
                 w-full
                 block
@@ -170,9 +125,7 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            >
+              " required>
               <option selected disabled value="Select Location">Select Location</option>
               <option value="Auckland">Auckland</option>
               <option value="Hamilton">Hamilton</option>
@@ -187,11 +140,7 @@
           </div>
           <div class="form-group">
             <label for="">Payment Type</label>
-            <select
-              name=""
-              v-model="paymentType"
-              id=""
-              class="
+            <select name="" v-model="paymentType" id="" class="
                 my-2
                 w-full
                 block
@@ -202,9 +151,7 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            >
+              " required>
               <option selected disabled value="Select Payment Type">Select Payment Type</option>
               <option value="Cash">Cash</option>
               <option value="Debit, Credit card">Debit, Credit card</option>
@@ -213,11 +160,7 @@
           </div>
           <div class="form-group">
             <label for="">Shipping Option</label>
-            <select
-              name=""
-              v-model="shippingOption"
-              id=""
-              class="
+            <select name="" v-model="shippingOption" id="" class="
                 my-2
                 w-full
                 block
@@ -228,9 +171,7 @@
                 border-light-purple
                 rounded-lg
                 text-gray-700
-              "
-              required
-            > 
+              " required>
               <option selected disabled value="Select Shipping Option">Select Shipping Option</option>
               <option value="NZ Post">NZ Post</option>
               <option value="NZ Couriers">NZ Couriers</option>
@@ -242,9 +183,7 @@
       <div class="item-description p-4">
         <div class="form-group flex flex-col">
           <label for="">Description</label>
-          <textarea
-            v-model="description"
-            class="
+          <textarea v-model="description" class="
               my-2
               p-2
               border-2
@@ -252,18 +191,13 @@
               border-light-purple
               rounded-lg
               text-gray-700
-            "
-            cols="10"
-            rows="5"
+            " cols="10" rows="5"
             placeholder="Please enter a description for this listing. Character limit of 500 characters applies."
-            required
-          >
+            required>
           </textarea>
         </div>
       </div>
-      <button
-        type="submit"
-        class="
+      <button type="submit" class="
           w-32
           self-end
           mr-4
@@ -276,8 +210,14 @@
           transition
           transform
           duration-200
-        "
-      >
+        ">
+        <svg v-show="isloading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+          fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
         Create Listing
       </button>
     </form>
@@ -306,6 +246,7 @@ export default {
       description: null,
       comments: [],
       loading: false,
+      isloading: false
     };
   },
   methods: {
@@ -327,6 +268,7 @@ export default {
         body: data,
       });
       const result = await response.json();
+      console.log(result)
       if (result) {
         this.loading = false;
       }
@@ -334,8 +276,9 @@ export default {
     },
 
     //upload post to database
-    createPost() {
-      console.log("post");
+   async createPost() {
+    console.log(this.imgURL)
+       this.isloading= true
       let post = {
         title: this.title,
         price: this.price * 100,
@@ -350,17 +293,23 @@ export default {
         comments: [],
       };
 
-      fetch("http://localhost:4000/posts", {
+      fetch("https://mevn-ecomerce-application.onrender.com/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(post),
         credentials: "include",
-      }).then(() => {
-        this.$router.push("/");
-      });
+      }).then((response) => {
+        console.log(response)
+        this.isloading= false
+        // this.$router.push("/");
+      }).catch((err) => {
+        console.log(err)
+        this.isloading= false
+      })
     },
   },
 };
+
 </script>
 
 <style scoped>
@@ -368,6 +317,7 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .item-info .form-group label {
   flex: 50%;
 }
@@ -375,6 +325,7 @@ export default {
 input {
   cursor: pointer;
 }
+
 select {
   cursor: pointer;
 }
