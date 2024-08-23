@@ -101,14 +101,14 @@ app.get("/posts/:postId", async (req, res, next) => {
 
 app.post("/posts", authUser, async (req, res, next) => {
   if (!req.body.imgURL){
-    return res.status(404).send({success: false, message: "image is a required filed"})
+    return res.status(401).send({success: false, message: "image is a required filed"})
   }
   if(!req.body.title || !req.body.userId || !req.body.price || !req.body.category || !req.body.condition){
-    return res.status(404).send({success:false, message: "tile, userid, price, category, condition is required"})
+    return res.status(401).send({success:false, message: "tile, userid, price, category, condition is required"})
   }
 
-  if(!req.body.size || !req.body.location || req.body.paymentType || !req.body.shippingOption || !req.body.description ){
-    return res.status(404).send({success:false, message: "size, location, paymentType, shippingOption, description is required "})
+  if(!req.body.size || !req.body.location || !req.body.paymentType || !req.body.shippingOption || !req.body.description ){
+    return res.status(401).send({success:false, message: "size, location, paymentType, shippingOption, description is required "})
   }
   try {
     const post = new Post({
