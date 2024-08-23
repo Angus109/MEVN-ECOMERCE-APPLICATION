@@ -50,7 +50,7 @@ app.use(cookieParser());
 const authUser = (req, res, next) => {
   const authHeader = req.cookies.jwt || req.headers.authorization;
  
-  if (!token) {
+  if (!authHeader) {
     console.log("User not logged in");
     return res
       .status(401)
