@@ -62,7 +62,7 @@ const authUser = (req, res, next) => {
         console.log(err);
         return res.status(401).send({success:false, error: err}) ;
       } else {
-        req.userId = decodedToken.id;s
+        req.userId = decodedToken.id;
         next();
       }
     });
