@@ -299,7 +299,9 @@ app.post("/accounts/login", async (req, res) => {
                 email: existingAccount.email,
                 fname: existingAccount.fname,
                 lname: existingAccount.lname,
+                token: token
               }
+              
             });
           } else {
             return res.status(401).send({
