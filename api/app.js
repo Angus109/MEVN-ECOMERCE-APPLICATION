@@ -48,13 +48,15 @@ mongoose.connect(
 app.use(cookieParser());
 
 const authUser = (req, res, next) => {
-  const token = req.cookies.jwt;
+  const authHeader = req.cookies.jwt || req.headers.authorization;
+ 
   if (!token) {
     console.log("User not logged in");
     return res
       .status(401)
       .send({success:false, message: "Access denied - User not logged in" })
   } else {
+    const token = authHeader.split(' ')[1] || authHeader
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
       if (err) {
         console.log(err);
