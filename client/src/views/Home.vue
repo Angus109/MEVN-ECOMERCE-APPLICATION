@@ -3,7 +3,7 @@
   <div class="">
     <div v-if="user" class="my-10 font-epilogue space-y-5 text-dark-purple">
       <h2 class="text-4xl font-bold">
-        Welcome, {{ user.fname }} {{ user.lname }}!
+        Welcome, {{ user?.fname }} {{ user?.lname }}!
       </h2>
       <h3 class="font-semibold text-2xl">What would you like to do today?</h3>
     </div>
@@ -26,7 +26,7 @@
     </div>
 
     <div
-      v-if="filteredPosts.length"
+      v-if="posts.length >= 1"
       class="
         grid
         gap-6
@@ -41,7 +41,6 @@
       <SinglePost
         class="flex mx-auto"
         v-for="post in filteredPosts"
-        :key="post._id"
         :post="post"
       />
     </div>
@@ -58,6 +57,7 @@
 import SinglePost from "../components/SinglePost.vue";
 import SearchFilter from "../components/SearchFilter.vue";
 import CategoryFilter from "../components/CategoryFilter.vue";
+import axios from "axios";
 
 export default {
   name: "Home",
@@ -69,6 +69,7 @@ export default {
     SinglePost,
     SearchFilter,
     CategoryFilter,
+    axios
   },
   data() {
     return {
@@ -81,14 +82,20 @@ export default {
   computed: {},
   mounted() {
     this.getPosts();
-    console.log("User:", this.user);
+    
   },
   methods: {
+       
     async getPosts() {
-      const response = await fetch("https://mevn-ecomerce-application.onrender.com/posts");
-      const data = await response.json();
-      this.posts = data;
-      this.filteredPosts = this.posts;
+      axios.get("https://mevn-ecomerce-application.onrender.com/posts")
+      .then((response)=>{
+        this.posts = response.data.result
+        this.filteredPosts = response.data.result
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+  
     },
     categorizeByFilter(category) {
       this.category = category;
@@ -111,7 +118,7 @@ export default {
           this.category === "" ||
           this.inputItem === undefined
         ) {
-          return post;
+          return this.posts;
         }
         return post.category === this.category;
       });

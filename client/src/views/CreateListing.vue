@@ -226,11 +226,31 @@
 
 <script>
 import BackToListings from "../components/BackToListings";
+import axios from "axios";
+import { toast } from 'vue3-toastify';
 
 export default {
   name: "CreateListing",
   components: {
     BackToListings,
+    axios
+  },
+  props: {
+    user: Object,
+  },
+
+  setup() {
+
+const notify = (message) => {
+  toast(message, {
+    autoClose: 1000,
+  });
+};
+
+return { notify };
+},
+  mounted(){
+   
   },
   data() {
     return {
@@ -277,12 +297,14 @@ export default {
 
     //upload post to database
    async createPost() {
+    console.log("User2:", this.user.token);
     console.log(this.imgURL)
        this.isloading= true
       let post = {
         title: this.title,
         price: this.price * 100,
         imgURL: this.imgURL,
+        userId: this.user.id,
         category: this.category,
         condition: this.condition,
         size: this.size,
@@ -293,17 +315,19 @@ export default {
         comments: [],
       };
 
-      fetch("https://mevn-ecomerce-application.onrender.com/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(post),
-        credentials: "include",
-      }).then((response) => {
+      axios.post("https://mevn-ecomerce-application.onrender.com/posts",
+       post, {
+        waithCredentials:true,
+        headers:{ "Content-Type": "application/json", "Authorization":`Bearer ${this.user.token}`}
+       }
+      ).then((response) => {
         console.log(response)
+        this.notify(response.data.message || "uploaded succesfully");
         this.isloading= false
-        // this.$router.push("/");
+        this.$router.push("/");
       }).catch((err) => {
         console.log(err)
+        this.notify(err.response.data.message || "fail to upload");
         this.isloading= false
       })
     },

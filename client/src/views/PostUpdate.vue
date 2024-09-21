@@ -281,20 +281,27 @@
 import BackToListings from "../components/BackToListings";
 export default {
   name: "PostUpdate",
-  data() {
-    return {
-      post: null,
-      loading: false,
-    };
-  },
   components: {
     BackToListings,
   },
-  mounted() {
-    this.getPostInfo();
-  },
+
   props: {
     postId: String,
+
+  },
+
+  data() {
+    return {
+      loading: false,
+      post:{},
+     
+    };
+  },
+
+  async mounted() {
+   await this.getPostInfo();
+   
+    
   },
 
   methods: {
@@ -308,6 +315,7 @@ export default {
         "https://mevn-ecomerce-application.onrender.com/posts/" + this.postId
       );
       const data = await response.json();
+      console.log(data)
       this.post = data;
     },
 

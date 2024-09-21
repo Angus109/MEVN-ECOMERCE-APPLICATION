@@ -72,12 +72,21 @@ const authUser = (req, res, next) => {
 //Get all posts - Alexis
 
 app.get("/posts", async (req, res, next) => {
-  try {
-    const posts = await Post.find().populate("author", "email fname lname");
-    res.status(200).send({success:true, result: posts});
-  } catch (err) {
-    next(err);
+  if(req.params.authorId){
+    const posts = await Post.find(req.params.authorId)
+    res.status(200).send({
+      success:true,
+      result: posts
+    })
+  }else{
+    try {
+      const posts = await Post.find().populate("author", "email fname lname");
+      res.status(200).send({success:true, result: posts});
+    } catch (err) {
+      next(err);
+    }
   }
+
 });
 
 //Get specific post - Alexis
@@ -316,7 +325,9 @@ app.post("/accounts/login", async (req, res) => {
 });
 
 app.get("/accounts/logout", async (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
+  if(res.cookie?.jwt){
+    res.cookie("jwt", "", { maxAge: 1 })
+  }
   res.status(200).send({
     success:true,
      message: "logged out " });

@@ -45,7 +45,7 @@
         type="submit"
         class="
           justify-end
-          w-1/5
+          w-fit-content
           px-4
           py-2
           bg-bright-purple

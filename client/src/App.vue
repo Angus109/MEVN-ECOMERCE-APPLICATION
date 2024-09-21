@@ -28,7 +28,7 @@ export default {
 
   data() {
     return {
-      user: null,
+      user: {},
     };
   },
 
@@ -41,7 +41,7 @@ export default {
           credentials: "include",
         });
         let user = await res.json();
-        if (res.status === 200) {
+        if (res?.status === 200) {
           this.userLoggedIn(user);
         } else {
           this.logout();
@@ -55,6 +55,7 @@ export default {
   methods: {
     async logout() {
       const response = await fetch("https://mevn-ecomerce-application.onrender.com/accounts/logout", {
+        headers:{'Authorization':``},
         credentials: "include",
       });
       const data = await response.json();

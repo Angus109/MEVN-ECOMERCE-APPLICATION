@@ -68,7 +68,8 @@
 export default {
   name: "SinglePost",
   props: {
-    post: Object,
+    post: Object
+
   },
   mounted() {},
 };

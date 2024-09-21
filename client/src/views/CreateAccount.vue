@@ -319,7 +319,7 @@ export default {
                         );
                         const data = await response.json();
                         this.isloading = false
-                        console.log(data);
+                        console.log(data.result);
                         alert("Account Created");
                         return this.$router.push(LoginVue);
                 },

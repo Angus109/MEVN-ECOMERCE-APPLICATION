@@ -1,16 +1,6 @@
 <template>
   <!-- Seller Tile - Alexis -->
-  <div
-    class="
-      w-96
-      border-2 border-opacity-30
-      bg-white
-      border-dark-purple
-      shadow-md
-      rounded-xl
-      px-4
-      flex flex-row
-    "
+  <div class="w-96 border-2 border-opacity-30 bg-white border-dark-purpleshadow-md rounded-xl px-4 flex flex-row"
   >
     <div class="flex flex-col w-1/4 align-middle">
       <svg
@@ -36,13 +26,13 @@
       <h3 class="text-md font-epilogue font-semibold text-purple-grey">
         Name:
         <span class="text-dark-purple"
-          >{{ author.fname }} {{ author.lname }}</span
+          >{{ author?.fname }} {{ author?.lname }}</span
         >
       </h3>
       <h3 class="text-md font-epilogue mb-2 font-semibold text-purple-grey">
         Member Since:
         <span class="text-dark-purple">
-          {{ new Date(author.createdAt).toLocaleDateString("en-NZ") }}
+          {{ new Date(author?.createdAt).toLocaleDateString("en-NZ") }}
         </span>
       </h3>
     </div>
@@ -53,8 +43,10 @@
 export default {
   name: "SellerTile",
   props: {
-    author: Object,
-    default: {},
+    author:{
+      Object,
+      default: {},
+    },
   },
 };
 </script>

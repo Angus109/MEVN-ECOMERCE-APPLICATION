@@ -199,6 +199,8 @@
 
 <script>
 import vClickOutside from "click-outside-vue3";
+import axios from "axios";
+import { toast } from 'vue3-toastify';
 
 export default {
   name: "NavBar",
@@ -210,6 +212,20 @@ export default {
   directives: {
     clickOutside: vClickOutside.directive,
   },
+  components:{
+    axios
+  },
+
+  setup() {
+
+const notify = (message) => {
+  toast(message, {
+    autoClose: 1000,
+  });
+};
+
+return { notify };
+},
 
   data() {
     return {
@@ -225,15 +241,27 @@ export default {
       this.menuOpen = false;
     },
     async logOut() {
-      // const response = await fetch("http://localhost:4000/accounts/logout", {
-      //   credentials: "include",
-      // });
-      // const data = await response.json();
+      
+       axios.get("https://mevn-ecomerce-application.onrender.com/accounts/logout", {
+        headers:{
+          'authorization': ``
+        },
+        credentials: true,
+      }).then((response)=>{
+        console.log(response.data)
+        localStorage.removeItem("user");
+         this.$router.push("/")
+         this.$emit("logout");
+         this.notify(response.data.message || "logout successfully 2")
+         location.reload();
 
-      // localStorage.removeItem("user");
-      // console.log(data);
-      // location.reload();
-      this.$emit("logout");
+      }).catch((err)=>{
+        console.log(err)
+        this.notify(err.message || "not logout yet!")
+      })
+    
+
+      
     },
   },
 };

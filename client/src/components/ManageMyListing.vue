@@ -61,7 +61,7 @@
         left-1/2
         border-2
         transform
-        -translate-x-1/2
+        -translte-x-1/2
         left
         rounded-xl
         border-light-purple
@@ -123,6 +123,10 @@
 export default {
   name: "ManageMyListing",
 
+  props: {
+    post: Object,
+  },
+
   data() {
     return {
       deleteConfirmMessage: false,
@@ -130,20 +134,15 @@ export default {
   },
 
   mounted() {
-    console.log(this.post._id);
+    console.log("id", this.post._id);
+    
   },
 
-  props: {
-    postId: String,
-    post: {
-      type: Object,
-      default: {},
-    },
-  },
+
 
   methods: {
     async deletePost() {
-      await fetch(`http://localhost:4000/posts/${this.postId}`, {
+      await fetch(`https://mevn-ecomerce-application.onrender.com/posts/${this.post._id}`, {
         method: "DELETE",
         credentials: "include",
       }).then((res) => {
